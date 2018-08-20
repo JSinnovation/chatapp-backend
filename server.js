@@ -21,10 +21,8 @@ mongoose.connect(
 );
 
 
-//app.use('/api/chatapp', auth);
-
 app.use('/api/chatapp', auth);
 
 app.listen(3002,() => {
     console.log('Running on port 3002'); 
-});   
+});    

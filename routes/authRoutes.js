@@ -7,7 +7,7 @@ const AuthCtrl = require('../controllers/auth');
 
 router.post('/register', AuthCtrl.CreateUser);
 
-module.export = router;
+module.exports = router;
 
 //routers will be made available with export
 
