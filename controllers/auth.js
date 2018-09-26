@@ -29,7 +29,7 @@ module.exports = {
     if(error && error.details) {
     return res
     .status(HttpStatus.BAD_REQUEST)
-    .json({ message: error.details })
+    .json({ msg: error.details })
 }
 
 const userEmail = await User.findOne({email: Helpers.lowerCase(req.body.email) 
@@ -56,7 +56,7 @@ const body = {
 };
 User.create(body).then((user) => {
     const token = jwt.sign({ data:user }, dbConfig.secret, {
-        expiresIn: 120
+        expiresIn: '5h'
     });
 res.cookie('auth',token);
     res
@@ -70,4 +70,28 @@ res.cookie('auth',token);
 });
 });
 },
-}  
+async LoginUser(req,res){
+if (!req.body.username || !req.body.password){
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: 'No empty fields allowed'});
+}
+
+await User.findOne({username: Helpers.firstUpper(req.body.username)}).then(user=> {
+    if(!user) {
+        return res.status(HttpStatus.NOT_FOUND).json({message: 'Username not found'});
+    }
+    return bcrypt.compare(req.body.password,user.password).then((result) => {
+        if(!result) {
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: 'Password is incorrect'})  
+        }
+        const token = jwt.sign({data:user},dbConfig.secret, {
+            expiresIn: '5h'
+        })
+        res.cookie('auth',token);
+        return res.status(HttpStatus.OK).json({message: 'Login successful', user, token});
+    })
+})
+.catch(err => {
+    return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: 'Error Occured'})
+})
+}
+};
