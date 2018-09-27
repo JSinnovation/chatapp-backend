@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const postSchema = mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    //ref: is needed for the populate method in posts.js
     username: { type: String, default: '' },
     post: { type: String, default: '' },
     comments: [
