@@ -58,6 +58,31 @@ try {
     .status(HttpStatus.INTERNAL_SERVER_ERROR)
     .json({message: 'Error occured'});
 }
+},
+async AddLike(req, res) {
+    const postId = req.body._id;
+    await Post.update(
+      {
+        _id: postId,
+        'likes.username': { $ne: req.user.username }
+      },
+      {
+        $push: {
+          likes: {
+            username: req.user.username
+          }
+        },
+        $inc: { totalLikes: 1 }
+      }
+    )
+    .then(() => {
+    res.status(HttpStatus.OK).json({message: 'You liked the Post'});
+    })
+        .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: 'Error Occured'})
+        );
 }
-
+    
 };
+
+
+    

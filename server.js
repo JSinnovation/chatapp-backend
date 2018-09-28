@@ -11,6 +11,9 @@ const server = require('http').createServer(app);
 const io = require('socket.io').listen(server);
 
 const dbConfig = require('./config/secret');
+
+require('./socket/streams')(io);
+
 const auth = require('./routes/authRoutes');
 const posts = require('./routes/postRoutes');
 
@@ -18,7 +21,7 @@ const posts = require('./routes/postRoutes');
 app.use((req, res, next)  => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Credentials", "true");
-  res.header('Access-Control-Allow-Methods', 'GET', 'POST', 'DELETE', 'PUT');
+  res.header('Access-Control-Allow-Methods', 'GET', 'POST', 'DELETE', 'PUT','OPTIONS');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
@@ -40,6 +43,6 @@ mongoose.connect(
 app.use('/api/chatapp', auth);
 app.use('/api/chatapp', posts);
 
-app.listen(3002,() => {
+server.listen(3002,() => {
     console.log('Listening on port 3002'); 
 });    
