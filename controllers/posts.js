@@ -80,6 +80,45 @@ async AddLike(req, res) {
     })
         .catch(err => res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({message: 'Error Occured'})
         );
+},
+async AddComment(req, res) {
+    const postId = req.body.postId;
+    await Post.update(
+      {
+        _id: postId,
+       },
+      {
+        $push: {
+          comments: {
+            userId: req.user._id,
+            username: req.user.username,
+            comment: req.body.comment,
+            createdAt: new Date()
+          }
+        }
+      }
+    )
+    .then(() => {
+    res.status(HttpStatus.OK).json({message: 'Comment added to post'});
+    })
+        .catch(err =>
+             res
+             .status(HttpStatus.INTERNAL_SERVER_ERROR)
+             .json({message: 'Error Occured'})
+        );
+},
+async GetPost(req,res) {
+    await Post.findOne({id: req.params.id})
+    .populate('user')
+    .populate('comments.userId')
+    .then((post) => {
+        res.status(HttpStatus.OK).json({message: 'Post Found', post});
+    })
+    .catch(err =>
+        res
+        .status(HttpStatus.NOT_FOUND)
+        .json({message: 'Post not found',post})
+   );
 }
     
 };
