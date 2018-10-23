@@ -29,7 +29,7 @@ module.exports = {
         _id: req.params.id
       })
       .populate('post.postId')
-      .populate('following.userfollowed')
+      .populate('following.userFollowed')
       .populate('followers.follower')
       .then((result) => {
         res.status(httpStatus.OK).json({
@@ -50,7 +50,7 @@ module.exports = {
         username: req.params.username
       })
       .populate('post.postId')
-      .populate('following.userfollowed')
+      .populate('following.userFollowed')
       .populate('followers.follower')
       .then((result) => {
         res.status(httpStatus.OK).json({

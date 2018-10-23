@@ -60,9 +60,21 @@ module.exports = {
                 .sort({
                     created: -1
                 }); //sorted newest to oldest
+            //MongoDB function $gte is greater than or equal to
+            const top = await Post.find({
+                    totalLikes: {
+                        $gte: 2 //modify as needed
+                    }
+                })
+                .populate('user')
+                .sort({
+                    created: -1
+                });
+
             return res.status(HttpStatus.OK).json({
                 message: 'All posts',
-                posts
+                posts,
+                top
             });
         } catch (err) {
             return res
@@ -126,13 +138,19 @@ module.exports = {
             );
     },
     async GetPost(req, res) {
-        await Post.findOne({_id: req.params.id})
+        await Post.findOne({
+                _id: req.params.id
+            })
             .populate('user')
             .populate('comments.userId')
             .then((post) => {
-                res.status(HttpStatus.OK).json({message: 'Post Found', post});
-            }).catch(err => res.status(HttpStatus.NOT_FOUND).json({message: 'Post not found',post}))
-        }
-    };
-       
-  
+                res.status(HttpStatus.OK).json({
+                    message: 'Post Found',
+                    post
+                });
+            }).catch(err => res.status(HttpStatus.NOT_FOUND).json({
+                message: 'Post not found',
+                post
+            }))
+    }
+};
